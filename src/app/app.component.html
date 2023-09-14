@@ -1,6 +1,24 @@
-<div>
-  <canvas baseChart [data]="data" [options]="options" [type]="'bar'"> </canvas>
-  <em>
-    *Note: API returns new data every 5 mins.
-  </em>
+<div class="body h-100">
+  <div class="container h-100">
+    <div class="d-flex flex-column h-100 p-3">
+      <div class="">
+        <ul class="d-flex p-0 m-0">
+          <li class="d-flex flex-fill align-items-center rounded-2 ms-4" [ngClass]="{'active': listing.symbol === selectedListing.symbol}" *ngFor="let listing of listings" (click)="fetchStockFeed(listing)">
+            <div class="d-flex align-items-center justify-content-center logo-container">
+              <img class="w-100 rounded-3" [src]="'assets/logos/' + listing.name.toLowerCase() + ' logo.png'" alt="">
+            </div>
+            {{listing.name}}
+          </li>
+        </ul>
+      </div>
+      <div class="mt-2">
+        <div class="rounded border-light border">
+          <canvas baseChart [data]="data" [options]="options" [type]="'bar'"> </canvas>
+          <em class="text-white">
+            *Note: API returns new data every 5 mins.
+          </em>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
