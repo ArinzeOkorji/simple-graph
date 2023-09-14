@@ -1,0 +1,16 @@
+div {
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-top: 30px;
+
+    canvas {
+        height: 100% !important;
+    }
+}
+
+em {
+    margin-top: 20px;
+}
