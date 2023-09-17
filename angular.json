@@ -4,6 +4,12 @@
   "newProjectRoot": "projects",
   "projects": {
     "SID-Data-Visualisation": {
+      "i18n": {
+        "sourceLocale":"en-US",
+        "locales": {
+          "fr-FR": "src/locale/messages.fr.xlf"
+        }
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,6 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": ["fr-FR"],
             "outputPath": "dist/sid-data-visualisation",
             "index": "src/index.html",
             "main": "src/main.ts",

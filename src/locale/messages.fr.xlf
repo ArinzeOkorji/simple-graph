@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="1128796130177949338" datatype="html">
+        <source> Alphabet Inc. is an American multinational technology conglomerate holding company headquartered in Mountain View, California. It was created through a restructuring of Google on October 2, 2015, and became the parent company of Google and several former Google subsidiaries. </source>
+        <target>Alphabet Inc. est une société holding de conglomérat technologique multinational américain dont le siège est à Mountain View, en Californie. Elle a été créée suite à une restructuration de Google le 2 octobre 2015 et est devenue la société mère de Google et de plusieurs anciennes filiales de Google.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">25,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4880564747738019661" datatype="html">
+        <source> The International Business Machines Corporation, nicknamed Big Blue, is an American multinational technology corporation headquartered in Armonk, New York and is present in over 175 countries. </source>
+        <target>L'International Business Machines Corporation, surnommée Big Blue, est une société multinationale américaine de technologie dont le siège est à Armonk, New York et qui est présente dans plus de 175 pays.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">28,30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4982203259347499923" datatype="html">
+        <source> Oracle Corporation is an American multinational computer technology company headquartered in Austin, Texas, United States. In 2020, Oracle was the third-largest software company in the world by revenue and market capitalization. </source>
+        <target>Oracle Corporation est une société multinationale américaine de technologie informatique dont le siège est à Austin, Texas, États-Unis. En 2020, Oracle était la troisième société de logiciels au monde en termes de chiffre d'affaires et de capitalisation boursière.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">31,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5990329786601826720" datatype="html">
+        <source> *Note: API returns new data every 3 mins. </source>
+        <target>*Remarque : l'API renvoie de nouvelles données toutes les 3 minutes.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">39,41</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

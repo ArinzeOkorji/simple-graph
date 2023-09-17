@@ -1,21 +1,46 @@
 <div class="body h-100">
   <div class="container h-100">
-    <div class="d-flex flex-column h-100 p-3">
-      <div class="">
-        <ul class="d-flex p-0 m-0">
-          <li class="d-flex flex-fill align-items-center rounded-2 ms-4" [ngClass]="{'active': listing.symbol === selectedListing.symbol}" *ngFor="let listing of listings" (click)="fetchStockFeed(listing)">
-            <div class="d-flex align-items-center justify-content-center logo-container">
-              <img class="w-100 rounded-3" [src]="'assets/logos/' + listing.name.toLowerCase() + ' logo.png'" alt="">
+    <select class="form-select ms-auto w-25" aria-label="Default select example" (change)='changeLanguage(selectedLocale)' [(ngModel)]='selectedLocale' name='selectedLocale'>
+      <option [value]="local.code" *ngFor="let local of locales">{{local.name}}</option>
+    </select>
+    <div class="d-flex flex-column flex-lg-row h-75 p-3 gap-lg-2">
+      <div class="col-lg-3">
+        <ul class="d-flex p-0 m-0 flex-lg-column">
+          <li class="d-flex flex-fill align-items-center rounded-2 ms-4 justify-content-between"
+            [ngClass]="{'active': listing.symbol === selectedListing.symbol}" *ngFor="let listing of listings"
+            (click)="fetchStockFeed(listing)">
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="logo-container me-2">
+                <img class="w-100 rounded-3" [src]="'assets/logos/' + listing.name.toLowerCase() + ' logo.png'" alt="">
+              </div>
+              <div>
+                <div>{{listing.name}}</div>
+                <div><small>{{listing.symbol}}</small></div>
+              </div>
             </div>
-            {{listing.name}}
+            <div class="d-flex align-items-center justify-content-center">
+              <div [class]="listing.move" class="d-flex align-items-center">{{listing.price}}</div>
+            </div>
           </li>
         </ul>
+
+        <div>
+          <div *ngIf="selectedListing.symbol === 'GOOG'" i18n>
+            Alphabet Inc. is an American multinational technology conglomerate holding company headquartered in Mountain View, California. It was created through a restructuring of Google on October 2, 2015, and became the parent company of Google and several former Google subsidiaries.
+          </div>
+          <div *ngIf="selectedListing.symbol === 'IBM'" i18n>
+            The International Business Machines Corporation, nicknamed Big Blue, is an American multinational technology corporation headquartered in Armonk, New York and is present in over 175 countries.
+          </div>
+          <div *ngIf="selectedListing.symbol === 'ORCL'" i18n>
+            Oracle Corporation is an American multinational computer technology company headquartered in Austin, Texas, United States. In 2020, Oracle was the third-largest software company in the world by revenue and market capitalization.
+          </div>
+        </div>
       </div>
-      <div class="mt-2">
-        <div class="rounded border-light border">
-          <canvas baseChart [data]="data" [options]="options" [type]="'bar'"> </canvas>
-          <em class="text-white">
-            *Note: API returns new data every 5 mins.
+      <div class="mt-2 col-lg-9">
+        <div class="rounded border-light border h-100">
+          <canvas class="h-75" baseChart [data]="data" [options]="options" [type]="'bar'"> </canvas>
+          <em class="text-white p-3" i18n>
+            *Note: API returns new data every 3 mins.
           </em>
         </div>
       </div>

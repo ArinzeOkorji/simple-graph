@@ -1,8 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnDestroy } from '@angular/core';
 import { ChartComponentLike, ChartData, ChartOptions } from 'chart.js';
 import { environment } from 'src/environment/environment';
 import { HttpClient } from '@angular/common/http';
-import { Subscription, interval } from 'rxjs';
+import { Observable, Subscription, forkJoin, interval } from 'rxjs';
 
 interface raw {
   open: string,
@@ -12,7 +12,7 @@ interface raw {
   volume: string,
 }
 
-interface Listing {symbol: string, name: string, min: number}
+interface Listing { symbol: string, name: string, min: number, price: number, move: string }
 
 @Component({
   selector: 'app-root',
@@ -25,60 +25,133 @@ export class AppComponent implements OnDestroy {
     {
       symbol: 'IBM',
       name: 'IBM',
-      min: 146
+      min: 145.5,
+      price: 0,
+      move: 'loss'
     },
     {
       symbol: 'ORCL',
       name: 'Oracle',
-      min: 109.5
+      min: 113.3,
+      price: 0,
+      move: 'loss'
     },
     {
       symbol: 'GOOG',
       name: 'Google',
-      min: 135
+      min: 138,
+      price: 0,
+      move: 'loss'
     }
   ]
   title = 'SID-Data-Visualisation';
-  feed: any = {};
+  feed: any = [];
   colors: string[] = [];
   data!: any;
   subsciptions = new Subscription();
+  httpArray: Observable<any>[] = [];
+  intervalTime = 300000;
+  locales:any = [
+   { name:"English(US)",code:"en-US"},
+    {name:"French(France)",code:"fr-FR"}
+   ]
+
+  selectedLocale: string;
 
   constructor(
     private http: HttpClient,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
-    this.fetchStockFeed(this.listings[0]);
+    this.fetchStockFeed(this.listings[1]);
+    this.fetchListingPrices();
+    this.selectedLocale = this.localeId
   }
 
   fetchStockFeed(selectedListing: Listing) {
     this.selectedListing = selectedListing;
-   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${this.selectedListing.symbol}&interval=5min&apikey=${environment.APIKEY}`;
-   
-  //  this.subsciptions.unsubscribe()
+    const url = `https://api.twelvedata.com/time_series?symbol=${this.selectedListing.symbol}&interval=1min&apikey=${environment.APIKEY}`;
+
 
     this.subsciptions.add(this.http.get(url)
       .subscribe(
         {
           next: (res: any) => {
-            this.feed = res['Time Series (5min)']
+            this.feed = res['values']
             this.setChartData();
           }
         }
       ))
 
     this.subsciptions.add(
-      interval(300000)
+      interval(this.intervalTime)
         .subscribe({
           next: () => {
             this.subsciptions.add(this.http.get(url)
               .subscribe(
                 {
                   next: (res: any) => {
-                    this.feed = res['Time Series (5min)']
+                    this.feed = res['values']
                     this.setChartData();
                   }
                 }
               ))
+          }
+        })
+    )
+  }
+
+  changeLanguage(code:string){
+    location.replace(`/${code}/`);
+    }
+
+  fetchListingPrices() {
+
+    this.listings.forEach(list => {
+      const url = `https://api.twelvedata.com/price?symbol=${list.symbol}&apikey=${environment.APIKEY}`;
+      const http = this.http.get(url);
+
+      this.httpArray.push(http)
+    })
+
+    this.subsciptions.add(
+      interval(this.intervalTime)
+        .subscribe(
+          {
+            next: () => {
+              forkJoin(this.httpArray)
+                .subscribe({
+                  next: (res) => {
+
+                    if (res.length === this.listings.length) {
+                      for (let i = 0; i < res.length; i++) {
+                        const newPrice = parseInt(res[i]['price']);
+
+                        this.listings[i].move = this.listings[i].price > newPrice ? 'loss' : 'gain';
+                        this.listings[i].price = newPrice;
+
+                      }
+                    }
+                  }
+                })
+            }
+          }
+        )
+    )
+
+    this.subsciptions.add(
+      forkJoin(this.httpArray)
+        .subscribe({
+          next: (res) => {
+
+            if (res.length === this.listings.length) {
+              for (let i = 0; i < res.length; i++) {
+                const newPrice = parseInt(res[i]['price']);
+
+                this.listings[i].move = this.listings[i].price > newPrice ? 'loss' : 'gain';
+                this.listings[i].price = newPrice;
+
+              }
+            }
           }
         })
     )
@@ -122,41 +195,42 @@ export class AppComponent implements OnDestroy {
         }
       }
     }
-;
-    const gains = Object.values(this.feed).filter((item: any) => {
-      return parseFloat(item['4. close']) > parseFloat(item['1. open'])
+      ;
+
+    const gains = this.feed.filter((item: any) => {
+      return parseFloat(item['close']) > parseFloat(item['open'])
     })
 
-    const loses = Object.values(this.feed).filter((item: any) => {
-      return parseFloat(item['1. open']) > parseFloat(item['4. close'])
+    const loses = this.feed.filter((item: any) => {
+      return parseFloat(item['open']) > parseFloat(item['close'])
     })
 
     const filteredLabel = [];
 
-    for(let item in this.feed) {
-      if(parseFloat(this.feed[item]['1. open']) !== parseFloat(this.feed[item]['4. close'])) {
-        filteredLabel.push(item)
+    const backgroundColors = [];
+    for (let item in this.feed) {
+      if (parseFloat(this.feed[item]['open']) !== parseFloat(this.feed[item]['close'])) {
+        parseFloat(this.feed[item]['open']) > parseFloat(this.feed[item]['close']) ? backgroundColors.push('red') : backgroundColors.push('green');
+        const formatedTime = new Date(this.feed[item]['datetime']).toLocaleTimeString()
+        filteredLabel.push(formatedTime)
       }
     }
 
 
-    console.log(filteredLabel.length, gains.length, loses.length)
     this.data = {
       labels: filteredLabel,
 
       datasets: [
         {
           label: 'Gains',
-          data: gains.map((item: any) => {
-            return [parseFloat(item['1. open']), parseFloat(item['4. close'])];
+          data: this.feed.map((item: any) => {
+            return [parseFloat(item['open']), parseFloat(item['close'])];
           }),
-          backgroundColor: 'green'
+          backgroundColor: backgroundColors
         },
         {
           label: 'Loses',
-          data: loses.map((item: any) => {
-            return [parseFloat(item['1. open']), parseFloat(item['4. close'])];
-          }),
+          data: '',
           backgroundColor: 'red'
         },
       ],
