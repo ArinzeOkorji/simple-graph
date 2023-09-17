@@ -5,9 +5,9 @@
   "projects": {
     "SID-Data-Visualisation": {
       "i18n": {
-        "sourceLocale":{"code": "en-US", "baseHref": ""},
+        "sourceLocale":"en-US",
         "locales": {
-          "fr-FR": {"translation": "src/locale/messages.fr.xlf", "baseHref": ""}
+          "fr-FR": "src/locale/messages.fr.xlf"
         }
       },
       "projectType": "application",
